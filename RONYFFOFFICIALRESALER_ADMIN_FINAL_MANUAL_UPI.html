@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RONYFFOFFICIALRESALER — Admin Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#05070d;--panel:#0b1019;--panel2:#0f1621;--line:#1d2a38;--text:#eef5fb;
+  --muted:#82909e;--cyan:#00e5ff;--green:#00d084;--red:#ff4568;--amber:#ffbf47;
+  --shadow:0 20px 60px rgba(0,0,0,.35)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(circle at 15% -10%,rgba(0,229,255,.12),transparent 28%),
+ radial-gradient(circle at 100% 20%,rgba(111,72,255,.10),transparent 28%),var(--bg);
+ color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.wrap{max-width:1450px;margin:auto;padding:22px}
+.top{height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+ border:1px solid var(--line);background:rgba(11,16,25,.82);backdrop-filter:blur(18px);
+ border-radius:20px;padding:0 18px;position:sticky;top:14px;z-index:30;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:1.2px;font-size:18px}
+.brandMark{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+ background:linear-gradient(135deg,var(--cyan),#7a5cff);color:#001017;font-weight:1000;box-shadow:0 0 25px #00e5ff22}
+.brand b{color:var(--cyan)}.topRight{display:flex;align-items:center;gap:10px}
+.badge{font-size:10px;color:var(--cyan);border:1px solid #00e5ff45;background:#00e5ff0d;
+ border-radius:999px;padding:8px 11px;font-weight:900}.avatar{width:34px;height:34px;border-radius:50%;
+ display:grid;place-items:center;background:#18232e;border:1px solid #2a3947;font-size:12px;font-weight:900}
+.login{max-width:460px;margin:10vh auto}.login .brandBig{text-align:center;margin-bottom:20px}
+.brandBig .brandMark{margin:auto;width:60px;height:60px;border-radius:18px;font-size:22px}
+.title{font-size:30px;font-weight:950;margin:0 0 6px}.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.card{background:linear-gradient(180deg,rgba(15,22,33,.94),rgba(9,14,22,.94));border:1px solid var(--line);
+ border-radius:22px;padding:20px;margin:16px 0;box-shadow:var(--shadow)}
+.appGrid{display:grid;grid-template-columns:235px minmax(0,1fr);gap:18px;margin-top:18px}
+.sidebar{position:sticky;top:98px;height:max-content;padding:12px;border:1px solid var(--line);border-radius:22px;
+ background:rgba(10,15,23,.88);box-shadow:var(--shadow)}
+.sideLabel{font-size:10px;color:#657482;font-weight:900;letter-spacing:1.5px;padding:12px 11px 7px}
+.navBtn{width:100%;border:0;background:transparent;color:#aebbc7;padding:12px;border-radius:13px;
+ text-align:left;font-weight:850;display:flex;align-items:center;gap:10px;margin:3px 0}
+.navBtn:hover,.navBtn.active{background:#13202b;color:#fff}.navIcon{width:28px;height:28px;border-radius:9px;
+ display:grid;place-items:center;background:#101923;color:var(--cyan);font-size:13px}
+.sideFoot{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.content{min-width:0}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:3px 0 16px}
+.eyebrow{font-size:10px;color:var(--cyan);font-weight:950;letter-spacing:2px;margin-bottom:8px}
+.hero h1{font-size:32px;line-height:1.05;margin:0 0 8px}.heroActions{display:flex;gap:9px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:17px;border:1px solid var(--line);border-radius:18px;background:#0b111a}
+.statTop{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase}
+.statIcon{width:32px;height:32px;border-radius:10px;background:#101d27;color:var(--cyan);display:grid;place-items:center}
+.statValue{font-size:27px;font-weight:950;margin-top:12px}.statHint{font-size:11px;color:#647482;margin-top:3px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}
+.field label{display:block;color:#9facb8;font-size:10px;font-weight:950;margin:0 0 7px;text-transform:uppercase;letter-spacing:.8px}
+.field input,.field textarea,.field select{width:100%;background:#070c13;color:#fff;border:1px solid #263542;border-radius:13px;
+ padding:12px;outline:none;transition:.2s}.field input:focus,.field textarea:focus,.field select:focus{
+ border-color:var(--cyan);box-shadow:0 0 0 3px #00e5ff12}.field textarea{min-height:95px;resize:vertical}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:900;transition:.18s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}.primary{background:var(--cyan);color:#001017}
+.secondary{background:#17232e;color:#fff;border:1px solid #263542}.danger{background:#ff365d;color:#fff}
+.success{background:var(--green);color:#00150d}.ghost{background:transparent;color:#aebbc7;border:1px solid var(--line)}
+.formTitleRow,.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.form-title{font-size:17px;font-weight:950}.sectionSub{font-size:11px;color:var(--muted);margin-top:4px}
+.search{max-width:360px;width:100%;position:relative}.search input{width:100%;background:#070c13;border:1px solid #263542;
+ border-radius:12px;padding:11px 13px;color:#fff}.table-wrap{overflow:auto;margin-top:14px;border:1px solid #18242e;border-radius:16px}
+.table{width:100%;border-collapse:collapse;min-width:920px}.table th,.table td{padding:13px 12px;border-bottom:1px solid #18242d;
+ text-align:left;font-size:12px;vertical-align:middle}.table tr:last-child td{border-bottom:0}.table tr:hover td{background:#0e1620}
+.table th{color:#718291;font-size:10px;text-transform:uppercase;letter-spacing:.7px;background:#091018}
+.productCell{display:flex;align-items:center;gap:10px}.productIcon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+ background:linear-gradient(135deg,#102936,#171d37);color:var(--cyan);font-weight:950;border:1px solid #203746}
+.productName{font-weight:900}.small{font-size:11px}.status{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:9px;font-weight:950}
+.status:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.on{background:#063d2c;color:#00e99a}.off{background:#40202a;color:#ff718e}
+.url-ok{color:#00e99a;font-weight:900}.url-bad{color:#ff718e;font-weight:900}.plan{font-weight:850;color:#fff}
+.menu{position:relative;display:inline-block}.menuBtn{width:34px;height:34px;border-radius:10px;border:1px solid #263542;background:#101821;color:#dce5ec;font-weight:950}
+.menuList{position:absolute;right:0;top:40px;width:170px;background:#0c141d;border:1px solid #263542;border-radius:14px;padding:6px;z-index:15;
+ box-shadow:0 18px 40px #0009;display:none}.menu.open .menuList{display:block}.menuList button{width:100%;border:0;background:transparent;color:#dce5ec;
+ padding:10px;border-radius:9px;text-align:left;font-weight:800;font-size:12px}.menuList button:hover{background:#16232e}.menuList .dangerItem{color:#ff718e}
+.video-preview{margin-top:12px;border:1px solid #263542;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 15px 35px #0008}
+.video-preview video{display:block;width:100%;max-height:320px}.video-note{font-size:11px;color:#71808d;margin-top:7px;line-height:1.5}
+.empty{text-align:center;color:#778592;padding:35px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+ background:#101923;border:1px solid #00e5ff44;padding:12px 17px;border-radius:13px;z-index:50;display:none;box-shadow:var(--shadow)}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.quick button{text-align:left;padding:14px;border-radius:14px;background:#0b131d;border:1px solid var(--line);color:#fff}
+.quick button b{display:block;margin-bottom:4px}.quick button span{font-size:11px;color:var(--muted)}
+.mobileNav{display:none}
+@media(max-width:900px){.appGrid{grid-template-columns:1fr}.sidebar{display:none}.mobileNav{display:flex;gap:6px;overflow:auto;margin-top:14px;padding:5px;background:#0b1119;border:1px solid var(--line);border-radius:15px}.mobileNav .navBtn{white-space:nowrap;width:auto;margin:0}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.wrap{padding:12px}.top{top:8px}.brand{font-size:14px}.badge{display:none}.hero{align-items:flex-start;flex-direction:column}.hero h1{font-size:25px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.card{padding:15px;border-radius:18px}.quick{grid-template-columns:1fr}.login{margin:6vh auto}.topRight .avatar{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="brandMark">R</div><span>RONYFF<b>OFFICIAL</b>RESALER</span></div>
+    <div class="topRight"><div id="adminState" class="badge">ADMIN PANEL</div><div class="avatar">RF</div></div>
+  </div>
+
+  <section id="loginCard" class="card login">
+    <div class="brandBig"><div class="brandMark">R</div></div>
+    <div class="title">Admin <span style="color:var(--cyan)">Control Center</span></div>
+    <p class="muted">Securely sign in with your Supabase admin account to manage products, videos, pricing and availability.</p>
+    <div class="field" style="margin-top:20px"><label>Email</label><input id="loginEmail" type="email" autocomplete="email" value="ronyffofficial590@gmail.com" placeholder="Admin email"></div>
+    <div class="field" style="margin-top:12px"><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
+    <button class="btn primary" style="width:100%;margin-top:15px" onclick="loginAdmin()">AUTHORIZE ACCESS →</button>
+    <p id="loginMsg" class="muted" style="margin-top:12px"></p>
+  </section>
+
+  <main id="adminApp" class="hidden">
+    <div class="mobileNav">
+      <button class="navBtn active" onclick="focusSection('dashboard')">⌂ Dashboard</button>
+      <button class="navBtn" onclick="focusSection('products')">▣ Products</button><button class="navBtn" onclick="focusSection('payments');loadPaymentRequests()">💳 Payment Requests</button>
+      <button class="navBtn" onclick="focusSection('editor')">＋ Add Product</button>
+    </div>
+
+    <div class="appGrid">
+      <aside class="sidebar">
+        <div class="sideLabel">CONTROL CENTER</div>
+        <button class="navBtn active" onclick="focusSection('dashboard')"><span class="navIcon">⌂</span> Dashboard</button>
+        <button class="navBtn" onclick="focusSection('products')"><span class="navIcon">▣</span> Products</button><button class="navBtn" onclick="focusSection('payments');loadPaymentRequests()"><span class="navIcon">₹</span> Payment Requests</button>
+        <button class="navBtn" onclick="focusSection('editor')"><span class="navIcon">＋</span> Product Editor</button>
+        <div class="sideLabel">SYSTEM</div>
+        <button class="navBtn" onclick="loadProducts();toast('Data refreshed')"><span class="navIcon">↻</span> Refresh Data</button>
+        <div class="sideFoot">
+          <button class="navBtn" onclick="logoutAdmin()"><span class="navIcon">↪</span> Sign Out</button>
+        </div>
+      </aside>
+
+      <section class="content">
+        <div id="dashboard">
+          <div class="hero">
+            <div><div class="eyebrow">ADMIN / OVERVIEW</div><h1>Good to see you, Admin.</h1><div class="muted">Manage your reseller catalog from one clean control center.</div></div>
+            <div class="heroActions"><button class="btn primary" onclick="focusSection('editor');resetForm()">＋ NEW PRODUCT</button></div>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="statTop">Total Products <span class="statIcon">▣</span></div><div id="statTotal" class="statValue">0</div><div class="statHint">All catalog entries</div></div>
+            <div class="stat"><div class="statTop">Active <span class="statIcon">●</span></div><div id="statActive" class="statValue">0</div><div class="statHint">Currently visible</div></div>
+            <div class="stat"><div class="statTop">Inactive <span class="statIcon">◐</span></div><div id="statInactive" class="statValue">0</div><div class="statHint">Temporarily disabled</div></div>
+            <div class="stat"><div class="statTop">Videos <span class="statIcon">▶</span></div><div id="statVideos" class="statValue">0</div><div class="statHint">Products with preview</div></div>
+          </div>
+
+          <div class="card">
+            <div class="formTitleRow"><div><div class="form-title">Quick Actions</div><div class="sectionSub">Common admin tasks, one tap away.</div></div></div>
+            <div class="quick" style="margin-top:14px">
+              <button onclick="focusSection('editor');resetForm()"><b>＋ Create Product</b><span>Add pricing, duration, video and Telegram update link.</span></button>
+              <button onclick="focusSection('products')"><b>▣ Manage Catalog</b><span>Search, edit, enable, disable or delete products.</span></button>
+              <button onclick="loadProducts();toast('Catalog refreshed')"><b>↻ Refresh Catalog</b><span>Pull the latest data directly from Supabase.</span></button>
+            </div>
+          </div>
+        </div>
+
+        <section id="editor" class="card">
+          <div class="formTitleRow">
+            <div><div class="form-title" id="formTitle">ADD PRODUCT</div><div class="sectionSub">Create a product with pricing, duration and media.</div></div>
+            <button class="btn ghost small" onclick="resetForm()">CLEAR FORM</button>
+          </div>
+          <input id="productId" type="hidden">
+          <div class="grid" style="margin-top:16px">
+            <div class="field"><label>Product Name</label><input id="name" placeholder="Example: GRINGO XP MOD V4"></div>
+            <div class="field"><label>Duration</label><select id="duration"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="15">15 Days</option><option value="30">30 Days</option></select></div>
+            <div class="field"><label>User Price (₹)</label><input id="userPrice" type="number" min="0" step="0.01" placeholder="100"></div>
+            <div class="field"><label>Reseller Price (₹)</label><input id="resellerPrice" type="number" min="0" step="0.01" placeholder="80"></div>
+            <div class="field full"><label>Description</label><textarea id="description" placeholder="Product features / information"></textarea></div>
+            <div class="field full"><label>Video URL</label><input id="videoUrl" type="url" placeholder="https://.../video.mp4"><div class="video-note">Direct MP4/WebM URLs work best for the built-in preview.</div></div>
+            <div class="field full"><label>Telegram / Update URL</label><input id="telegramUrl" type="url" placeholder="https://t.me/..."></div>
+            <div class="field"><label>Status</label><select id="active"><option value="true">ACTIVE</option><option value="false">INACTIVE</option></select></div>
+          </div>
+          <div id="previewBox" class="video-preview hidden"><video id="previewVideo" controls playsinline preload="metadata"></video></div>
+          <div class="actions" style="margin-top:15px"><button class="btn primary" onclick="saveProduct()">SAVE PRODUCT</button><button class="btn secondary" onclick="resetForm()">CLEAR</button></div>
+        </section>
+
+        <section id="products" class="card">
+          <div class="toolbar">
+            <div><div class="form-title">PRODUCT CATALOG</div><div class="sectionSub">All products stored in Supabase.</div></div>
+            <div class="search"><input id="search" placeholder="⌕  Search name, ID or description..." oninput="renderProducts()"></div>
+          </div>
+          <div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Product</th><th>Duration</th><th>Pricing</th><th>Video</th><th>Status</th><th>More</th></tr></thead><tbody id="productRows"></tbody></table></div>
+        </section>
+
+        <section id="payments" class="card">
+          <div class="toolbar"><div><div class="form-title">PAYMENT REQUESTS</div><div class="sectionSub">Manual UPI proof submissions. Approve only after checking the screenshot and UTR.</div></div><button class="btn secondary" onclick="loadPaymentRequests()">↻ Refresh</button></div>
+          <div class="table-wrap"><table class="table" style="min-width:980px"><thead><tr><th>ID</th><th>User</th><th>Product</th><th>Amount</th><th>UTR</th><th>Proof</th><th>Status</th><th>Action</th></tr></thead><tbody id="paymentRows"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody></table></div>
+        </section>
+      </section>
+    </div>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const SUPABASE_URL='https://dgknhptbbozshyfiyobo.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_NEHCtr3Y0o8FctOz5Jm59A_P4GhFAQd';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let products=[];
+const $=id=>document.getElementById(id);
+function toast(msg){const t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.style.display='none',2500)}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+function validUrl(v){try{return /^https?:$/i.test(new URL(v).protocol)}catch{return false}}
+function focusSection(id){const el=$(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+document.addEventListener('click',e=>{if(!e.target.closest('.menu'))document.querySelectorAll('.menu.open').forEach(x=>x.classList.remove('open'))})
+
+async function loginAdmin(){
+  const email=$('loginEmail').value.trim(),password=$('loginPassword').value;
+  $('loginMsg').textContent='Signing in...';
+  const {error}=await db.auth.signInWithPassword({email,password});
+  if(error){$('loginMsg').textContent=error.message;return}
+  await showAdmin();
+}
+async function showAdmin(){
+  const {data:{session}}=await db.auth.getSession();
+  if(!session){$('loginCard').classList.remove('hidden');$('adminApp').classList.add('hidden');return}
+  $('loginCard').classList.add('hidden');$('adminApp').classList.remove('hidden');
+  $('adminState').textContent=session.user.email||'ADMIN';
+  await loadProducts();
+  await loadPaymentRequests();
+}
+async function logoutAdmin(){await db.auth.signOut();location.reload()}
+
+async function loadProducts(){
+  const {data,error}=await db.from('products').select('*').order('id',{ascending:false});
+  if(error){toast('Products load failed: '+error.message);console.error(error);return}
+  products=data||[];updateStats();renderProducts();
+}
+function updateStats(){
+  $('statTotal').textContent=products.length;
+  $('statActive').textContent=products.filter(p=>p.is_active).length;
+  $('statInactive').textContent=products.filter(p=>!p.is_active).length;
+  $('statVideos').textContent=products.filter(p=>p.video_url).length;
+}
+function renderProducts(){
+  const q=$('search').value.trim().toLowerCase();
+  const rows=products.filter(p=>!q||[p.name,p.description,p.video_url,p.telegram_url,String(p.id)].join(' ').toLowerCase().includes(q));
+  $('productRows').innerHTML=rows.length?rows.map(p=>{
+    const initial=esc((p.name||'P').trim().charAt(0).toUpperCase());
+    return `<tr>
+      <td><b>#${esc(p.id)}</b></td>
+      <td><div class="productCell"><div class="productIcon">${initial}</div><div><div class="productName">${esc(p.name)}</div><div class="muted small">${esc(p.description||'No description')}</div></div></div></td>
+      <td><span class="plan">${esc(p.duration_days)} Day${Number(p.duration_days)===1?'':'s'}</span></td>
+      <td><b>₹${esc(p.user_price)}</b><div class="muted small">Reseller ₹${esc(p.reseller_price)}</div></td>
+      <td>${p.video_url?'<span class="url-ok">● READY</span>':'<span class="url-bad">● NONE</span>'}</td>
+      <td><span class="status ${p.is_active?'on':'off'}">${p.is_active?'ACTIVE':'INACTIVE'}</span></td>
+      <td><div class="menu"><button class="menuBtn" onclick="this.parentElement.classList.toggle('open')">•••</button><div class="menuList">
+        <button onclick="editProduct(${Number(p.id)})">✎ Edit Product</button>
+        ${p.video_url?`<button onclick="previewProduct(${Number(p.id)})">▶ Preview Video</button>`:''}
+        ${p.telegram_url?`<button onclick="window.open('${esc(p.telegram_url)}','_blank','noopener')">↗ Open Telegram</button>`:''}
+        <button onclick="toggleProduct(${Number(p.id)},${!p.is_active})">${p.is_active?'◐ Disable':'● Enable'}</button>
+        <button class="dangerItem" onclick="deleteProduct(${Number(p.id)})">⌫ Delete</button>
+      </div></div></td>
+    </tr>`
+  }).join(''):'<tr><td colspan="7" class="empty">No products found.</td></tr>';
+}
+function resetForm(){
+  $('productId').value='';$('name').value='';$('description').value='';$('userPrice').value='';$('resellerPrice').value='';
+  $('duration').value='1';$('videoUrl').value='';$('telegramUrl').value='';$('active').value='true';$('formTitle').textContent='ADD PRODUCT';hidePreview();
+}
+function editProduct(id){
+  const p=products.find(x=>Number(x.id)===Number(id));if(!p)return;
+  $('productId').value=p.id;$('name').value=p.name||'';$('description').value=p.description||'';
+  $('userPrice').value=p.user_price??'';$('resellerPrice').value=p.reseller_price??'';$('duration').value=String(p.duration_days||1);
+  $('videoUrl').value=p.video_url||'';$('telegramUrl').value=p.telegram_url||'';$('active').value=String(p.is_active!==false);
+  $('formTitle').textContent='EDIT PRODUCT #'+p.id;previewVideo();focusSection('editor');
+}
+async function saveProduct(){
+  const name=$('name').value.trim();if(!name){toast('Product name is required');return}
+  const userPrice=Number($('userPrice').value),resellerPrice=Number($('resellerPrice').value),duration=Number($('duration').value);
+  if(!Number.isFinite(userPrice)||userPrice<0||!Number.isFinite(resellerPrice)||resellerPrice<0){toast('Enter valid prices');return}
+  const video=$('videoUrl').value.trim(),telegram=$('telegramUrl').value.trim();
+  if(video&&!validUrl(video)){toast('Video URL is invalid');return}if(telegram&&!validUrl(telegram)){toast('Telegram URL is invalid');return}
+  const payload={name,description:$('description').value.trim(),user_price:userPrice,reseller_price:resellerPrice,duration_days:duration,video_url:video||null,telegram_url:telegram||null,is_active:$('active').value==='true'};
+  const id=$('productId').value;
+  let result=id?await db.from('products').update(payload).eq('id',id):await db.from('products').insert(payload).select().single();
+  if(result.error){toast('Save failed: '+result.error.message);console.error(result.error);return}
+  toast(id?'Product updated':'Product added');resetForm();await loadProducts();focusSection('products');
+}
+async function toggleProduct(id,state){
+  const {error}=await db.from('products').update({is_active:state}).eq('id',id);
+  if(error){toast('Status update failed: '+error.message);return}toast(state?'Product enabled':'Product disabled');await loadProducts();
+}
+async function deleteProduct(id){
+  if(!confirm('Delete this product permanently?'))return;
+  const {error}=await db.from('products').delete().eq('id',id);
+  if(error){toast('Delete failed: '+error.message);return}toast('Product deleted');await loadProducts();
+}
+async function loadPaymentRequests(){
+  const box=$('paymentRows'); if(!box)return; box.innerHTML='<tr><td colspan="8" class="empty">Loading payment requests...</td></tr>';
+  const {data,error}=await db.rpc('list_manual_payment_requests');
+  if(error){box.innerHTML='<tr><td colspan="8" class="empty">'+esc(error.message)+'</td></tr>';return;}
+  const rows=data||[]; if(!rows.length){box.innerHTML='<tr><td colspan="8" class="empty">No payment requests.</td></tr>';return;}
+  box.innerHTML=rows.map(r=>`<tr>
+    <td><b>#${esc(r.id)}</b></td><td>${esc(r.username||r.user_id)}</td><td><b>${esc(r.product_name||('Product #'+r.product_id))}</b><div class="muted small">${esc(r.duration_days)} days</div></td>
+    <td><b>₹${esc(r.price)}</b></td><td>${esc(r.utr_number||'—')}</td>
+    <td>${r.proof_image?`<button class="btn ghost small" onclick="viewProof(${Number(r.id)})">View Proof</button>`:'—'}</td>
+    <td><span class="status ${r.status==='active'?'on':r.status==='pending'?'on':'off'}">${esc((r.status||'').toUpperCase())}</span></td>
+    <td>${r.status==='pending'?`<div class="actions"><button class="btn success small" onclick="approvePayment(${Number(r.id)})">✓ Approve</button><button class="btn danger small" onclick="rejectPayment(${Number(r.id)})">✕ Reject</button></div>`:'—'}</td>
+  </tr>`).join('');
+  window.__paymentRequests=rows;
+}
+function viewProof(id){const r=(window.__paymentRequests||[]).find(x=>Number(x.id)===Number(id));if(!r?.proof_image){toast('No proof image');return}const w=window.open('','_blank','noopener');if(w){w.document.write('<title>Payment Proof</title><body style="margin:0;background:#111;display:grid;place-items:center"><img style="max-width:100%;max-height:100vh;object-fit:contain" src="'+r.proof_image+'"></body>');w.document.close();}}
+async function approvePayment(id){if(!confirm('Approve this payment and issue the product key?'))return;const {data,error}=await db.rpc('approve_manual_payment',{p_purchase_id:id});if(error){toast('Approve failed: '+error.message);return}toast(data?.message||'Payment approved');await loadPaymentRequests();}
+async function rejectPayment(id){if(!confirm('Reject this payment proof?'))return;const {data,error}=await db.rpc('reject_manual_payment',{p_purchase_id:id});if(error){toast('Reject failed: '+error.message);return}toast(data?.message||'Payment rejected');await loadPaymentRequests();}
+
+function hidePreview(){$('previewBox').classList.add('hidden');$('previewVideo').removeAttribute('src');$('previewVideo').load()}
+function previewVideo(){
+  const url=$('videoUrl').value.trim();
+  if(!url){hidePreview();return}
+  $('previewVideo').src=url;$('previewBox').classList.remove('hidden');$('previewVideo').load();
+}
+function previewProduct(id){
+  const p=products.find(x=>Number(x.id)===Number(id));if(!p||!p.video_url)return;
+  $('videoUrl').value=p.video_url;focusSection('editor');previewVideo();
+}
+$('videoUrl').addEventListener('change',previewVideo);$('videoUrl').addEventListener('blur',previewVideo);
+db.auth.onAuthStateChange((_event,session)=>{if(session)showAdmin()});showAdmin();
+</script>
+</body></body>
+</html>
